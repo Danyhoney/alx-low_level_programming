@@ -1,15 +1,35 @@
 #include "main.h"
 
 /**
- * add - Adds two integers and returns
- * the result.
- *
- * @a: number one.
- * @b: number two.
- *
- * Return: Add of number one and number two.
+
+ * print_alphabet_x10 - prints all alphabets in lowercase 10 times.
+
+ * Return: On success 1.
+
  */
-int add(int a, int b)
+
+void print_alphabet_x10(void)
+
 {
-	return (a + b);
+
+        char i, k;
+
+
+        for (k = 0; k < 10; k++)
+
+        {
+
+
+                for (i = 'a'; i <= 'z'; i++)
+
+                {
+
+                        _putchar(i);
+
+                }
+
+                _putchar('\n');
+
+        }
+
 }
