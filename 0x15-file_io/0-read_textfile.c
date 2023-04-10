@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
 #include "main.h"
 
 /**
@@ -14,32 +9,28 @@
  */
 ssize_t read_textfile(const char *filename, size_t letters)
 {
-    int file_descriptor;
-    ssize_t bytes_read, bytes_written;
-    char *buffer;
+	int fd;
+	ssize_t nrd, nwr;
+	char *buf;
 
-    if (filename == NULL) {
-        fprintf(stderr, "Error: filename is NULL\n");
-        return 0;
-    }
+	if (!filename)
+		return (0);
 
-    file_descriptor = open(filename, O_RDONLY);
-    if (file_descriptor == -1) {
-        fprintf(stderr, "Error: failed to open file\n");
-        return 0;
-    }
+	fd = open(filename, O_RDONLY);
 
-    buffer = malloc(sizeof(char) * (letters));
-    if (buffer == NULL) {
-        fprintf(stderr, "Error: failed to allocate memory for buffer\n");
-        return 0;
-    }
+	if (fd == -1)
+		return (0);
 
-    bytes_read = read(file_descriptor, buffer, letters);
-    bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
+	buf = malloc(sizeof(char) * (letters));
+	if (!buf)
+		return (0);
 
-    close(file_descriptor);
-    free(buffer);
+	nrd = read(fd, buf, letters);
+	nwr = write(STDOUT_FILENO, buf, nrd);
 
-    return bytes_written;
+	close(fd);
+
+	free(buf);
+
+	return (nwr);
 }
