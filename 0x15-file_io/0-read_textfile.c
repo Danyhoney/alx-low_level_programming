@@ -1,53 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "lists.h"
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include "main.h"
 
 /**
- * find_listint_loop - finds the loop in a linked list.
- * @head: head of a list.
+ * read_textfile - reads a text file and prints the letters
+ * @filename: filename.
+ * @letters: numbers of letters printed.
  *
- * Return: the address of the node where the loop starts.
+ * Return: numbers of letters printed. It fails, returns 0.
  */
-listint_t *find_listint_loop(listint_t *head)
+ssize_t read_textfile(const char *filename, size_t letters)
 {
-	listint_t *slow_ptr;
-	listint_t *fast_ptr;
-	listint_t *start_ptr;
+    int file_descriptor;
+    ssize_t bytes_read, bytes_written;
+    char *buffer;
 
-	if (head == NULL)
-	{
-		printf("Error: head is NULL\n");
-		return (NULL);
-	}
+    if (filename == NULL) {
+        fprintf(stderr, "Error: filename is NULL\n");
+        return 0;
+    }
 
-	slow_ptr = head;
-	fast_ptr = head;
-	start_ptr = head;
+    file_descriptor = open(filename, O_RDONLY);
+    if (file_descriptor == -1) {
+        fprintf(stderr, "Error: failed to open file\n");
+        return 0;
+    }
 
-	while (slow_ptr && fast_ptr && fast_ptr->next)
-	{
-		slow_ptr = slow_ptr->next;
-		fast_ptr = fast_ptr->next->next;
+    buffer = malloc(sizeof(char) * (letters));
+    if (buffer == NULL) {
+        fprintf(stderr, "Error: failed to allocate memory for buffer\n");
+        return 0;
+    }
 
-		if (slow_ptr == fast_ptr)
-		{
-			while (1)
-			{
-				fast_ptr = start_ptr;
+    bytes_read = read(file_descriptor, buffer, letters);
+    bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
 
-				while (fast_ptr->next != slow_ptr && fast_ptr->next != start_ptr)
-				{
-					fast_ptr = fast_ptr->next;
-				}
+    close(file_descriptor);
+    free(buffer);
 
-				if (fast_ptr->next == slow_ptr)
-					break;
-
-				start_ptr = start_ptr->next;
-			}
-			return (fast_ptr->next);
-		}
-	}
-
-	return (NULL);
+    return bytes_written;
 }
