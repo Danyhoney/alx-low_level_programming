@@ -1,38 +1,58 @@
+/*
+ * File_name: 2-add_dnodeint.c
+ * Created: 18th May, 2023
+ * Auth: David James Taiye(Official0mega)
+ * Size: undefined
+ * Project: alx-low_level_programming
+ * Status: submitted.
+ */
+#include <stdlib.h>
 #include "lists.h"
 
 /**
- * add_dnodeinteger - adds a new node at the beginning
- * of a dlistint_t list
- *
- * @head: head of the list
- * @n: value of the element
- * Return: the address of the new element
+ * add_dnodeint - Adds a new node at the beginning of a dlistint_t list.
+ * @n: pointer to the head or start of the doubly linked list
+ * @head: address pointer
+ * Return: the address of the new element, or NULL if it failed
  */
+
 dlistint_t *add_dnodeint(dlistint_t **head, const int n)
 {
-	dlistint_t *new;
-	dlistint_t *h;
+	/*
+	 * We will create a temporary new node
+	 * and we will use malloc to allocate some memory for it.
+	 */
+	dlistint_t *temp_node = (dlistint_t *)malloc(sizeof(dlistint_t));
 
-	new = malloc(sizeof(dlistint_t));
-	if (new == NULL)
-		return (NULL);
-
-	new->n = n;
-	new->prev = NULL;
-	h = *head;
-
-	if (h != NULL)
+	if (temp_node == NULL)
 	{
-		while (h->prev != NULL)
-			h = h->prev;
+		/*
+		 * It should return NULL if it failed to allocate
+		 * memory for the temp new node
+		 */
+
+		return (NULL);
 	}
 
-	new->next = h;
+	/*
+	 * Let us now set value for the new temp node
+	 */
+	temp_node->n = n;
+	temp_node->prev = NULL;
+	temp_node->next = *head;
 
-	if (h != NULL)
-		h->prev = new;
+	if (*head != NULL)
+	{
+		/*
+		 * Since the List is empty, therefore, there new temp node would
+		 * automatically becomes the head...
+		 */
+		(*head)->prev = temp_node;
+	}
 
-	*head = new;
-
-	return (new);
+	/*
+	 * Updating the head pointer to the new temp node
+	 */
+	*head = temp_node;
+	return (temp_node);
 }

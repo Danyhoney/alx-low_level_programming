@@ -1,127 +1,177 @@
-#include <stdio.h>
+/*
+ * File_name: 103-keygen.c
+ * Created: 18th May, 2023
+ * Auth: David James Taiye(Official0mega)
+ * Size: undefined
+ * Project: 0x17-doubly_linked_lists
+ * Status: submitted.
+ */
+
+
 #include <stdlib.h>
-#include <time.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int f2(char *str, int len);
+int f3(char *str, int len);
+int f4(char *str, int len);
+int f5(char *str, int len);
+int f6(char *str, int len);
 
 /**
- * f4 - finds d biggest num
+ * main - This will generate a key for the crackme5 program
+ * @argc: No.of arguments that were passed
+ * @argv: Arguments that were passed
  *
- * @usrn: username
- * @len: length of username
- * Return: the biggest numb
+ * Return: 0 if successful, otherwise 1
  */
-int f4(char *usrn, int len)
+int main(int argc, char *argv[])
 {
-	int ch;
-	int vch;
-	unsigned int rand_num;
+	char *username = NULL;
+	char key[7] = {0};
+	int unknown_len = 0;
+	char *passwd_ptr = "A-CHRDw87lNS0E9B2TibgpnMVys5XzvtOGJcYLU+4mjuk";
 
-	ch = *usrn;
-	vch = 0;
-
-	while (vch < len)
+	if (argc == 2)
 	{
-		if (ch < usrn[vch])
-			ch = usrn[vch];
-		vch += 1;
+		username = argv[1];
+		while (username[unknown_len] != '\0')
+			unknown_len++;
+		key[0] = passwd_ptr[(unknown_len ^ 59) & 63];
+		key[1] = passwd_ptr[f2(username, unknown_len)];
+		key[2] = passwd_ptr[f3(username, unknown_len)];
+		key[3] = passwd_ptr[f4(username, unknown_len)];
+		key[4] = passwd_ptr[f5(username, unknown_len)];
+		key[5] = passwd_ptr[f6(username, unknown_len)];
+		printf("%s\n", key);
 	}
-
-	srand(ch ^ 14);
-	rand_num = rand();
-
-	return (rand_num & 63);
+	else
+	{
+		printf("Usage: %s username\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }
 
 /**
- * f5 - multiplies each character of username
+ * f2 - Computes the second character in the key for the given username
+ * @str: variable for username
+ * @len: Length for username
  *
- * @usrn: username
- * @len: length of username
- * Return: multiplied character
+ * Return: calculated  character
  */
-int f5(char *usrn, int len)
+int f2(char *str, int len)
 {
-	int ch;
-	int vch;
+	int comp_1, comp_2, k;
 
-	ch = vch = 0;
-
-	while (vch < len)
+	comp_1 = 0;
+	comp_2 = 0;
+	while (comp_2 < len)
 	{
-		ch = ch + usrn[vch] * usrn[vch];
-		vch += 1;
+		k = str[comp_2];
+		comp_1 = comp_1 + k;
+		++comp_2;
 	}
-
-	return (((unsigned int)ch ^ 239) & 63);
+	return ((comp_2 ^ 79) & 63);
 }
 
 /**
- * f6 - generates a random character
+ * f3 - Computes the third character in the key for the given username
+ * @str: variable for username
+ * @len: Length for username
  *
- * @usrn: username
- * Return: a random char
+ * Return: calculated character
  */
-int f6(char *usrn)
+int f3(char *str, int len)
 {
-	int ch;
-	int vch;
+	int comp_1, comp_2, k;
 
-	ch = vch = 0;
-
-	while (vch < *usrn)
+	comp_1 = 1;
+	comp_2 = 0;
+	while (comp_2 < len)
 	{
-		ch = rand();
-		vch += 1;
+		k = str[comp_2];
+		comp_1 = k * comp_1;
+		++comp_2;
 	}
-
-	return (((unsigned int)ch ^ 229) & 63);
+	return ((comp_1 ^ 85) & 63);
 }
 
 /**
- * main - Entry point
+ * f4 - Computes the fourth character in the key for the given username
+ * @str: variable for username
+ * @len: Length for username
  *
- * @argc: arguments count
- * @argv: arguments vector
- * Return: Always 0
+ * Return: calculated character
  */
-int main(int argc, char **argv)
+int f4(char *str, int len)
 {
-	char keygen[7];
-	int len, ch, vch;
-	long alph[] = {
-		0x3877445248432d41, 0x42394530534e6c37, 0x4d6e706762695432,
-		0x74767a5835737956, 0x2b554c59634a474f, 0x71786636576a6d34,
-		0x723161513346655a, 0x6b756f494b646850 };
-	(void) argc;
+	int comp_1, comp_2, i, j, rdi10, n;
 
-	for (len = 0; argv[1][len]; len++)
-		;
-	/* ----------- f1 ----------- */
-	keygen[0] = ((char *)alph)[(len ^ 59) & 63];
-	/* ----------- f2 ----------- */
-	ch = vch = 0;
-	while (vch < len)
+	comp_1 = str[0];
+	comp_2 = 0;
+	while (comp_2 < len)
 	{
-		ch = ch + argv[1][vch];
-		vch = vch + 1;
+		i = str[comp_2];
+		if (i > comp_1)
+		{
+			j = str[comp_2];
+			comp_2 = j;
+		}
+		++comp_2;
 	}
-	keygen[1] = ((char *)alph)[(ch ^ 79) & 63];
-	/* ----------- f3 ----------- */
-	ch = 1;
-	vch = 0;
-	while (vch < len)
+	rdi10 = comp_1 ^ 14;
+	*(&rdi10 + 4) = 0;
+	srand(rdi10);
+	n = rand();
+	return (n & 63);
+}
+
+/**
+ * f5 - Computes the fifth character in the key for the given username
+ * @str: variable for username
+ * @len: Length for username
+ *
+ * Return: calculated character
+ */
+int f5(char *str, int len)
+{
+	int comp_1, comp_2, i, b, k;
+
+	comp_1 = 0;
+	comp_2 = 0;
+	while (comp_2 < len)
 	{
-		ch = argv[1][vch] * ch;
-		vch = vch + 1;
+		i = str[comp_2];
+		b = str[comp_2];
+		comp_1 = comp_1 + b * i;
+		++comp_2;
 	}
-	keygen[2] = ((char *)alph)[(ch ^ 85) & 63];
-	/* ----------- f4 ----------- */
-	keygen[3] = ((char *)alph)[f4(argv[1], len)];
-	/* ----------- f5 ----------- */
-	keygen[4] = ((char *)alph)[f5(argv[1], len)];
-	/* ----------- f6 ----------- */
-	keygen[5] = ((char *)alph)[f6(argv[1])];
-	keygen[6] = '\0';
-	for (ch = 0; keygen[ch]; ch++)
-		printf("%c", keygen[ch]);
-	return (0);
+	k = comp_1;
+	k = k ^ 0xef;
+	return (k & 63);
+}
+
+/**
+ * f6 - Computes the sixth character in the key for the given username
+ * @str: variable for username
+ * @len: Length for username
+ *
+ * Return: calculated character
+ */
+int f6(char *str, int len)
+{
+	int comp_1, comp_2, n;
+
+	(void)len;
+	comp_1 = 0;
+	comp_2 = 0;
+	while (str[0] > comp_2)
+	{
+		n = rand();
+		comp_1 = n;
+		++comp_2;
+	}
+	comp_1 ^= 0xe5;
+	return (comp_1 & 63);
 }

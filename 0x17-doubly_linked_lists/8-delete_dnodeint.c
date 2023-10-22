@@ -1,52 +1,53 @@
+/*
+ * File_name: 8-delete_dnodeint.c
+ * Created: 18th May, 2023
+ * Auth: David James Taiye(Official0mega)
+ * Size: undefined
+ * Project: 0x17-doubly_linked_lists
+ * Status: submitted.
+ */
+
+#include <stdlib.h>
 #include "lists.h"
 
 /**
- * del_dnodeint_at_index - deletes the node at index of a
- * dlistint_t linked list
- *
- * @head: head of the list
- * @index: index of the new node
- * Return: 1 if it succeeded, -1 if it failed
- */
+* delete_dnodeint_at_index - that deletes the node at index
+* @head: variable pointer to pointer
+* @index: index to delete
+* Return: 1 if it succeeded, -1 if it failed
+*/
+
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-	dlistint_t *h1;
-	dlistint_t *h2;
-	unsigned int i;
+	dlistint_t *node_ptr = NULL;
+	unsigned int temp = 0;
 
-	h1 = *head;
-
-	if (h1 != NULL)
-		while (h1->prev != NULL)
-			h1 = h1->prev;
-
-	i = 0;
-
-	while (h1 != NULL)
+	if (head != NULL)
 	{
-		if (i == index)
+		node_ptr = *head;
+		while ((temp != index) && (node_ptr != NULL))
 		{
-			if (i == 0)
+			node_ptr = node_ptr->next;
+			temp++;
+		}
+		if ((temp == index) && (node_ptr != NULL))
+		{
+			if (node_ptr->next != NULL)
 			{
-				*head = h1->next;
-				if (*head != NULL)
-					(*head)->prev = NULL;
+				node_ptr->next->prev = node_ptr->prev;
 			}
-			else
+			if (node_ptr->prev != NULL)
 			{
-				h2->next = h1->next;
-
-				if (h1->next != NULL)
-					h1->next->prev = h2;
+				node_ptr->prev->next = node_ptr->next;
 			}
-
-			free(h1);
+			if (temp == 0)
+			{
+				*head = node_ptr->next;
+			}
+			free(node_ptr);
+			node_ptr = NULL;
 			return (1);
 		}
-		h2 = h1;
-		h1 = h1->next;
-		i++;
 	}
-
 	return (-1);
 }
